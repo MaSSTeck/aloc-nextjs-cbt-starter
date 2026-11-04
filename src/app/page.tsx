@@ -38,6 +38,7 @@ export default function CBTApp() {
   const [stage, setStage] = useState<"setup" | "quiz" | "result">("setup");
   const [selectedExam, setSelectedExam] = useState("jamb");
   const [selectedSubject, setSelectedSubject] = useState("mathematics");
+  const [contentSource, setContentSource] = useState<"historical" | "synthetic" | "all">("historical");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
@@ -72,7 +73,7 @@ export default function CBTApp() {
 
     try {
       const res = await fetch(
-        `/api/questions?examType=${selectedExam}&subject=${selectedSubject}&limit=10`
+        `/api/questions?examType=${selectedExam}&subject=${selectedSubject}&contentSource=${contentSource}&limit=10`
       );
       const json = await res.json();
 
@@ -186,7 +187,7 @@ export default function CBTApp() {
           </div>
 
           {/* Subject Selection */}
-          <div className="mb-8">
+          <div className="mb-6">
             <label className="block text-xs font-mono text-zinc-400 uppercase tracking-wider mb-3">
               2. Select Subject
             </label>
@@ -206,6 +207,49 @@ export default function CBTApp() {
                   }`}
                 >
                   {sub.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Content Source Selection (Historical Default vs Opt-In Synthetic) */}
+          <div className="mb-8">
+            <label className="block text-xs font-mono text-zinc-400 uppercase tracking-wider mb-3">
+              3. Question Provenance (Default: Historical Past Questions)
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              {[
+                {
+                  id: "historical",
+                  label: "Historical Past Questions",
+                  desc: "Default — Authentic past papers",
+                },
+                {
+                  id: "synthetic",
+                  label: "Synthetic AI Questions",
+                  desc: "Opt-in — Verified AI curriculum items",
+                },
+                {
+                  id: "all",
+                  label: "Combined Pool",
+                  desc: "Opt-in — Historical + Synthetic",
+                },
+              ].map((src) => (
+                <button
+                  key={src.id}
+                  type="button"
+                  onClick={() => {
+                    setContentSource(src.id as "historical" | "synthetic" | "all");
+                    setErrorMessage(null);
+                  }}
+                  className={`p-3 rounded-xl border text-left transition-all ${
+                    contentSource === src.id
+                      ? "border-brand-500 bg-brand-500/10 text-white"
+                      : "border-zinc-800 bg-zinc-950/40 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"
+                  }`}
+                >
+                  <div className="font-semibold text-xs">{src.label}</div>
+                  <div className="text-[11px] text-zinc-500 mt-0.5">{src.desc}</div>
                 </button>
               ))}
             </div>

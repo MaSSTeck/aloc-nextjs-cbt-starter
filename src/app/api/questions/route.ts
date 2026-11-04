@@ -7,6 +7,7 @@ export async function GET(request: Request) {
   const rawExamType = (searchParams.get("examType") || "jamb").toLowerCase();
   const subject = (searchParams.get("subject") || "mathematics").toLowerCase();
   const topic = searchParams.get("topic") || undefined;
+  const contentSource = (searchParams.get("contentSource") || "historical").toLowerCase();
   const limit = Number.parseInt(searchParams.get("limit") || "10", 10);
 
   // Normalize examType to match OpenAPI enum
@@ -90,6 +91,7 @@ export async function GET(request: Request) {
       examType: examType,
       subject: subject,
       topic: topic,
+      contentSource: contentSource as any,
       limit: limit,
     });
 

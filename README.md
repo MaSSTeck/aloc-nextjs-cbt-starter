@@ -75,12 +75,13 @@ const config = new Configuration({
 
 const aloc = new QuestionsApi(config);
 
-// Query WAEC Chemistry questions by topic
+// Query WAEC Chemistry questions by topic (defaults to historical past questions)
 const response = await aloc.listQuestions({
   examType: "waec",
   subject: "chemistry",
   topic: "Periodic Table",
-  limit: 20,
+  contentSource: "historical", // Default: 'historical'; pass 'synthetic' or 'all' to opt in
+  limit: 15,
 });
 ```
 
